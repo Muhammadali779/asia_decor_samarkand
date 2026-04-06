@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}To'y Bezaklari — {{ agency.name }}{% endblock %}
+{% block content %}
+<div class="section has-bottom-nav">
+    <div style="padding: 24px 20px 16px;">
+        <a href="/" style="color:var(--gray);font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:20px">
+            <i class="fas fa-arrow-left"></i> Orqaga
+        </a>
+        <div class="tab-bar-inline" style="display:flex;gap:8px;margin-bottom:8px">
+            <button class="tab-btn active" id="btnBezak" onclick="switchBezak('bezak')">💐 To'y bezaklari</button>
+            <button class="tab-btn" id="btnSarpo" onclick="switchBezak('sarpo')">💍 Sarpo-sandiq</button>
+        </div>
+    </div>
+
+    <div id="panelBezak">
+        <div style="padding:0 20px 12px">
+            <p class="section-title">💐 To'y Bezaklari</p>
+            <div class="gold-line"></div>
+        </div>
+        {% if items %}
+        <div class="grid-2">
+            {% for item in items %}
+            <a href="/xizmat/{{ item.id }}/" class="card">
+                <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" class="card-img" loading="lazy">
+                <div class="card-body">
+                    <div class="card-title">{{ item.title }}</div>
+                    <div class="card-price">{{ item.price|floatformat:0 }} {{ item.price_label }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:60px 20px;color:var(--gray)">
+            <i class="fas fa-ring" style="font-size:48px;display:block;margin-bottom:16px;color:var(--black-border)"></i>
+            Hozircha to'y bezaklari mavjud emas
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="panelSarpo" style="display:none">
+        <div style="padding:0 20px 12px">
+            <p class="section-title">💍 Sarpo-sandiq</p>
+            <div class="gold-line"></div>
+        </div>
+        {% if sarpo %}
+        <div class="grid-2">
+            {% for item in sarpo %}
+            <a href="/xizmat/{{ item.id }}/" class="card">
+                <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" class="card-img" loading="lazy">
+                <div class="card-body">
+                    <div class="card-title">{{ item.title }}</div>
+                    <div class="card-price">{{ item.price|floatformat:0 }} {{ item.price_label }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:60px 20px;color:var(--gray)">
+            <i class="fas fa-box" style="font-size:48px;display:block;margin-bottom:16px;color:var(--black-border)"></i>
+            Hozircha sarpo-sandiq xizmatlari mavjud emas
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function switchBezak(type) {
+    document.getElementById('panelBezak').style.display = type === 'bezak' ? 'block' : 'none';
+    document.getElementById('panelSarpo').style.display = type === 'sarpo' ? 'block' : 'none';
+    document.getElementById('btnBezak').classList.toggle('active', type === 'bezak');
+    document.getElementById('btnSarpo').classList.toggle('active', type === 'sarpo');
+}
+</script>
+{% endblock %}

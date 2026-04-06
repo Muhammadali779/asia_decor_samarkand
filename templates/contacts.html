@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Kontaktlar — {{ agency.name }}{% endblock %}
+{% block content %}
+<div class="section has-bottom-nav" style="padding:32px 0 80px">
+    <div style="padding:0 20px 28px">
+        <p class="section-title">📞 Aloqa</p>
+        <div class="gold-line"></div>
+        <p class="section-sub">Biz bilan bog'laning</p>
+    </div>
+
+    <div style="padding:0 20px;display:flex;flex-direction:column;gap:12px">
+
+        {% if agency.phone1 %}
+        <a href="tel:{{ agency.phone1 }}" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--black-card);border:1px solid var(--black-border);border-radius:12px;transition:all 0.2s" onmouseenter="this.style.borderColor='var(--gold-dark)'" onmouseleave="this.style.borderColor='var(--black-border)'">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--black);font-size:18px;flex-shrink:0">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div>
+                <div style="font-size:11px;color:var(--gray);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px">Telefon 1</div>
+                <div style="font-size:18px;font-weight:600;color:var(--gold)">{{ agency.phone1 }}</div>
+            </div>
+            <i class="fas fa-chevron-right" style="margin-left:auto;color:var(--gray);font-size:12px"></i>
+        </a>
+        {% endif %}
+
+        {% if agency.phone2 %}
+        <a href="tel:{{ agency.phone2 }}" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--black-card);border:1px solid var(--black-border);border-radius:12px;transition:all 0.2s" onmouseenter="this.style.borderColor='var(--gold-dark)'" onmouseleave="this.style.borderColor='var(--black-border)'">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;color:var(--black);font-size:18px;flex-shrink:0">
+                <i class="fas fa-phone"></i>
+            </div>
+            <div>
+                <div style="font-size:11px;color:var(--gray);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px">Telefon 2</div>
+                <div style="font-size:18px;font-weight:600;color:var(--gold)">{{ agency.phone2 }}</div>
+            </div>
+            <i class="fas fa-chevron-right" style="margin-left:auto;color:var(--gray);font-size:12px"></i>
+        </a>
+        {% endif %}
+
+        {% if agency.email %}
+        <a href="mailto:{{ agency.email }}" style="display:flex;align-items:center;gap:14px;padding:16px;background:var(--black-card);border:1px solid var(--black-border);border-radius:12px">
+            <div style="width:44px;height:44px;border-radius:50%;background:rgba(201,169,110,0.15);border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0">
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+                <div style="font-size:11px;color:var(--gray);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px">Email</div>
+                <div style="font-size:15px;font-weight:500;color:var(--white)">{{ agency.email }}</div>
+            </div>
+        </a>
+        {% endif %}
+
+        {% if agency.address %}
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--black-card);border:1px solid var(--black-border);border-radius:12px">
+            <div style="width:44px;height:44px;border-radius:50%;background:rgba(201,169,110,0.15);border:1px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:18px;flex-shrink:0">
+                <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+                <div style="font-size:11px;color:var(--gray);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px">Manzil</div>
+                <div style="font-size:15px;color:var(--white);line-height:1.5">{{ agency.address }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Social Media -->
+        <div style="padding:20px 0 8px">
+            <div style="font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Ijtimoiy tarmoqlar</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+                {% if agency.telegram_link %}
+                <a href="{{ agency.telegram_link }}" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(0,136,204,0.08);border:1px solid rgba(0,136,204,0.25);border-radius:12px;color:#40B3E0">
+                    <i class="fab fa-telegram-plane" style="font-size:20px;width:24px;text-align:center"></i>
+                    <span style="font-size:15px;font-weight:500">Telegram</span>
+                    <i class="fas fa-external-link-alt" style="margin-left:auto;font-size:11px;opacity:0.5"></i>
+                </a>
+                {% endif %}
+                {% if agency.instagram_link %}
+                <a href="{{ agency.instagram_link }}" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(225,48,108,0.08);border:1px solid rgba(225,48,108,0.25);border-radius:12px;color:#E1306C">
+                    <i class="fab fa-instagram" style="font-size:20px;width:24px;text-align:center"></i>
+                    <span style="font-size:15px;font-weight:500">Instagram</span>
+                    <i class="fas fa-external-link-alt" style="margin-left:auto;font-size:11px;opacity:0.5"></i>
+                </a>
+                {% endif %}
+                {% if agency.youtube_link %}
+                <a href="{{ agency.youtube_link }}" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.2);border-radius:12px;color:#FF4444">
+                    <i class="fab fa-youtube" style="font-size:20px;width:24px;text-align:center"></i>
+                    <span style="font-size:15px;font-weight:500">YouTube</span>
+                    <i class="fas fa-external-link-alt" style="margin-left:auto;font-size:11px;opacity:0.5"></i>
+                </a>
+                {% endif %}
+                {% if agency.tiktok_link %}
+                <a href="{{ agency.tiktok_link }}" target="_blank" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(105,201,208,0.08);border:1px solid rgba(105,201,208,0.2);border-radius:12px;color:#69C9D0">
+                    <i class="fab fa-tiktok" style="font-size:20px;width:24px;text-align:center"></i>
+                    <span style="font-size:15px;font-weight:500">TikTok</span>
+                    <i class="fas fa-external-link-alt" style="margin-left:auto;font-size:11px;opacity:0.5"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if agency.bio %}
+        <div style="padding:20px;background:var(--black-card);border:1px solid var(--black-border);border-radius:12px;border-left:3px solid var(--gold-dark)">
+            <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Biz haqimizda</div>
+            <p style="font-size:14px;color:var(--gray-light);line-height:1.65">{{ agency.bio }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

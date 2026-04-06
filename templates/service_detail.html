@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+{% block title %}{{ item.title }} — {{ agency.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+.detail-header {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: var(--black-card);
+}
+.detail-header img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.detail-header-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 40%, rgba(10,10,10,0.95) 100%);
+}
+.back-btn {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: 38px; height: 38px;
+    background: rgba(10,10,10,0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+    font-size: 16px;
+    border: 1px solid rgba(255,255,255,0.15);
+    z-index: 10;
+}
+.detail-body { padding: 20px 20px 100px; }
+.detail-type {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+.detail-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+.detail-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 20px;
+}
+.detail-desc {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--gray-light);
+    margin-bottom: 28px;
+}
+/* Gallery */
+.gallery-scroll {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 20px 4px;
+    margin: 0 -20px 24px;
+    scrollbar-width: none;
+}
+.gallery-scroll::-webkit-scrollbar { display: none; }
+.gallery-thumb {
+    flex-shrink: 0;
+    width: 90px; height: 90px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+.gallery-thumb:hover, .gallery-thumb.active { border-color: var(--gold); }
+/* Sticky order btn */
+.sticky-order {
+    position: fixed;
+    bottom: 60px; left: 0; right: 0;
+    padding: 10px 16px;
+    background: rgba(10,10,10,0.97);
+    border-top: 1px solid var(--black-border);
+    z-index: 500;
+}
+@media (min-width: 768px) {
+    .sticky-order { bottom: 0; max-width: 600px; left: 50%; right: auto; transform: translateX(-50%); border-radius: 12px 12px 0 0; }
+}
+/* Payment choice */
+.pay-choice {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.pay-card {
+    border: 1.5px solid var(--black-border);
+    border-radius: 10px;
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+}
+.pay-card.selected {
+    border-color: var(--gold);
+    background: rgba(201,169,110,0.08);
+}
+.pay-card-label { font-size: 12px; color: var(--gray); margin-bottom: 4px; }
+.pay-card-amount { font-size: 16px; font-weight: 700; color: var(--gold); }
+/* Copy card */
+.copy-card {
+    background: var(--black-soft);
+    border: 1px solid var(--black-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.copy-card-num { font-size: 18px; font-weight: 600; letter-spacing: 2px; color: var(--gold); flex: 1; }
+.copy-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    background: rgba(201,169,110,0.15);
+    color: var(--gold);
+    border: 1px solid rgba(201,169,110,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.copy-btn:hover { background: rgba(201,169,110,0.25); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="has-bottom-nav">
+    <!-- Header Image -->
+    <div class="detail-header">
+        <img src="{{ item.cover_image.url }}" alt="{{ item.title }}" id="mainImg">
+        <div class="detail-header-overlay"></div>
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+    </div>
+
+    <!-- Body -->
+    <div class="detail-body">
+        <div class="detail-type">{{ item.get_service_type_display }}</div>
+        <h1 class="detail-title">{{ item.title }}</h1>
+        <div class="detail-price">{{ item.price|floatformat:0 }} {{ item.price_label }}</div>
+
+        {% if item.description %}
+        <p class="detail-desc">{{ item.description }}</p>
+        {% endif %}
+
+        <!-- Gallery -->
+        {% if images %}
+        <div class="gallery-scroll">
+            <img src="{{ item.cover_image.url }}" alt="" class="gallery-thumb active" onclick="setMain(this, '{{ item.cover_image.url }}')">
+            {% for img in images %}
+            <img src="{{ img.image.url }}" alt="" class="gallery-thumb" onclick="setMain(this, '{{ img.image.url }}')">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sticky Order Button -->
+    <div class="sticky-order">
+        <button class="btn btn-gold btn-full" onclick="openModal('orderModal')">
+            <i class="fas fa-shopping-bag"></i>
+            Buyurtma berish
+        </button>
+    </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="orderModal">
+    <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">✨ Buyurtma berish</div>
+
+        <div id="formStep1">
+            <div class="form-group">
+                <label class="form-label">Ismingiz</label>
+                <input type="text" class="form-input" id="custName" placeholder="To'liq ismingiz">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Telefon raqam</label>
+                <input type="tel" class="form-input" id="custPhone" placeholder="+998 90 123 45 67">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Yetkazish manzili</label>
+                <input type="text" class="form-input" id="custAddr" placeholder="Ko'cha, uy raqami">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tabriklanuvchi ismi</label>
+                <input type="text" class="form-input" id="bName" placeholder="Tabriklanuvchi ismi">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Yoshi</label>
+                <input type="number" class="form-input" id="bAge" placeholder="Masalan: 25" min="1" max="120">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tadbir sanasi (ixtiyoriy)</label>
+                <input type="date" class="form-input" id="eventDate">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Izoh (ixtiyoriy)</label>
+                <textarea class="form-input" id="custNotes" rows="2" placeholder="Qo'shimcha xohish yoki izoh..."></textarea>
+            </div>
+
+            <!-- Payment choice -->
+            <label class="form-label">To'lov turi</label>
+            <div class="pay-choice">
+                <div class="pay-card selected" id="payFull" onclick="selectPayment('full')">
+                    <div class="pay-card-label">To'liq to'lov</div>
+                    <div class="pay-card-amount">{{ item.price|floatformat:0 }} so'm</div>
+                </div>
+                <div class="pay-card" id="payAdvance" onclick="selectPayment('advance')">
+                    <div class="pay-card-label">Zaklad {{ agency.advance_percent }}%</div>
+                    <div class="pay-card-amount" id="advanceAmt">{{ item.get_advance_amount }} so'm</div>
+                </div>
+            </div>
+
+            <button class="btn btn-gold btn-full" onclick="submitOrder()" id="submitBtn">
+                Buyurtmani Tasdiqlash
+            </button>
+        </div>
+
+        <!-- SUCCESS STEP -->
+        <div id="formStep2" style="display:none;text-align:center;padding:20px 0">
+            <div style="font-size:52px;margin-bottom:16px">✅</div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);margin-bottom:10px">Buyurtma qabul qilindi!</h3>
+            <p style="color:var(--gray);font-size:14px;margin-bottom:24px">30 daqiqa ichida siz bilan bog'lanamiz</p>
+
+            <div class="copy-card">
+                <div>
+                    <div style="font-size:11px;color:var(--gray);margin-bottom:4px">To'lov kartasi</div>
+                    <div class="copy-card-num" id="cardNum">—</div>
+                    <div style="font-size:12px;color:var(--gray)" id="cardOwner"></div>
+                </div>
+                <button class="copy-btn" onclick="copyCard()">Nusxa</button>
+            </div>
+
+            <div style="background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);border-radius:10px;padding:14px;margin-bottom:20px">
+                <div style="font-size:13px;color:var(--gray);margin-bottom:4px">To'lash kerak</div>
+                <div style="font-size:24px;font-weight:700;color:var(--gold)" id="payAmount">—</div>
+            </div>
+
+            <button class="btn btn-outline btn-full" onclick="closeModal('orderModal')">Yopish</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedPayment = 'full';
+const PRICE = {{ item.price }};
+const ADVANCE = {{ item.get_advance_amount }};
+const CARD = "{{ agency.payment_card }}";
+const CARD_OWNER = "{{ agency.payment_card_owner }}";
+
+function selectPayment(type) {
+    selectedPayment = type;
+    document.getElementById('payFull').classList.toggle('selected', type === 'full');
+    document.getElementById('payAdvance').classList.toggle('selected', type === 'advance');
+}
+
+function setMain(el, url) {
+    document.getElementById('mainImg').src = url;
+    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+}
+
+async function submitOrder() {
+    const name = document.getElementById('custName').value.trim();
+    const phone = document.getElementById('custPhone').value.trim();
+    const addr = document.getElementById('custAddr').value.trim();
+    const bname = document.getElementById('bName').value.trim();
+    const bage = parseInt(document.getElementById('bAge').value) || 0;
+
+    if (!name) { showToast('❌ Ismingizni kiriting'); return; }
+    if (!phone || phone.length < 9) { showToast('❌ Telefon raqam kiriting'); return; }
+    if (!addr) { showToast('❌ Manzilni kiriting'); return; }
+    if (!bname) { showToast('❌ Tabriklanuvchi ismini kiriting'); return; }
+    if (bage < 1) { showToast('❌ Yoshni kiriting'); return; }
+
+    const amount = selectedPayment === 'full' ? PRICE : ADVANCE;
+
+    const btn = document.getElementById('submitBtn');
+    btn.innerHTML = '<span class="spinner"></span> Yuborilmoqda...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/buyurtma/', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                service_id: {{ item.id }},
+                customer_name: name,
+                customer_phone: phone,
+                delivery_address: addr,
+                birthday_person_name: bname,
+                birthday_person_age: bage,
+                event_date: document.getElementById('eventDate').value || null,
+                notes: document.getElementById('custNotes').value.trim(),
+                payment_type: selectedPayment,
+                amount_paid: amount,
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('formStep1').style.display = 'none';
+            document.getElementById('formStep2').style.display = 'block';
+            document.getElementById('cardNum').textContent = data.card_number;
+            document.getElementById('cardOwner').textContent = data.card_owner || '';
+            document.getElementById('payAmount').textContent = Number(data.amount).toLocaleString() + " so'm";
+        } else {
+            showToast('❌ Xatolik: ' + (data.error || 'Qayta urinib ko\'ring'));
+            btn.innerHTML = 'Buyurtmani Tasdiqlash';
+            btn.disabled = false;
+        }
+    } catch {
+        showToast('❌ Ulanishda xatolik');
+        btn.innerHTML = 'Buyurtmani Tasdiqlash';
+        btn.disabled = false;
+    }
+}
+
+function copyCard() {
+    const num = document.getElementById('cardNum').textContent.replace(/\s/g, '');
+    navigator.clipboard.writeText(num).then(() => showToast('✅ Karta raqami nusxalandi'));
+}
+</script>
+{% endblock %}

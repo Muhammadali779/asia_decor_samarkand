@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+{% block title %}{{ agency.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .nav { display: none !important; }
+  .page { padding-top: 0 !important; }
+  .bottom-nav { display: none !important; }
+
+  html, body { height: 100%; }
+
+  .taplink-page {
+    min-height: 100vh;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 40px;
+  }
+
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .bg-particles::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 0%,   rgba(201,169,110,0.13) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 30% at 50% 100%, rgba(201,169,110,0.07) 0%, transparent 70%);
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0%   { opacity: 0;   transform: translateY(0)      scale(1); }
+    15%  { opacity: 0.5; }
+    85%  { opacity: 0.15; }
+    100% { opacity: 0;   transform: translateY(-100vh) scale(0.4); }
+  }
+
+  .taplink-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    padding: 52px 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LOGO */
+  .logo-wrap { position: relative; margin-bottom: 22px; }
+  .logo-ring-outer {
+    width: 136px; height: 136px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,169,110,0.20);
+    display: flex; align-items: center; justify-content: center;
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 0   0  rgba(201,169,110,0.10); }
+    50%      { box-shadow: 0 0 20px 6px rgba(201,169,110,0.08); }
+  }
+  .logo-ring-inner {
+    width: 116px; height: 116px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,169,110,0.42);
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 30%, rgba(201,169,110,0.08), transparent 70%);
+  }
+  .logo-img {
+    width: 98px; height: 98px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid var(--gold-dark);
+  }
+  .logo-placeholder {
+    width: 98px; height: 98px;
+    border-radius: 50%;
+    background: #111;
+    border: 2.5px solid var(--gold-dark);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 3px;
+  }
+  .logo-placeholder .lp-letters {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    line-height: 1;
+  }
+  .logo-placeholder .lp-name {
+    font-size: 7px; letter-spacing: 2px; color: var(--gold-dark); font-weight: 700;
+  }
+
+  /* TEXT */
+  .agency-tag {
+    font-size: 10px; letter-spacing: 3.5px; color: var(--gold-dark);
+    font-weight: 700; text-transform: uppercase; margin-bottom: 10px;
+    text-align: center;
+  }
+  .agency-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 5.5vw, 28px);
+    font-weight: 700; text-align: center; line-height: 1.25;
+    color: var(--white); margin-bottom: 8px;
+  }
+  .agency-tagline {
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    color: var(--gold); text-transform: uppercase;
+    text-align: center; margin-bottom: 30px;
+  }
+
+  /* ORNAMENT */
+  .ornament { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 24px; }
+  .orn-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(201,169,110,0.5)); }
+  .orn-line.r { background: linear-gradient(to left, transparent, rgba(201,169,110,0.5)); }
+  .orn-diamond { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+  /* BUTTON STACK */
+  .btn-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 24px; }
+
+  /* TL BUTTON */
+  .tl-btn {
+    display: flex; align-items: center;
+    width: 100%; height: 60px;
+    border-radius: 14px; border: 1px solid;
+    overflow: hidden; text-decoration: none;
+    transition: transform 0.16s, box-shadow 0.16s;
+    cursor: pointer;
+  }
+  .tl-btn:hover  { transform: translateY(-2px); }
+  .tl-btn:active { transform: scale(0.97); }
+
+  .tl-icon {
+    width: 60px; height: 60px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .tl-label {
+    flex: 1; font-size: 12.5px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    text-align: center; padding-right: 60px;
+  }
+
+  /* all social buttons: same black/gold palette */
+  .tl-social {
+    background: rgba(201,169,110,0.07);
+    border-color: rgba(201,169,110,0.32);
+    color: var(--gold-light);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  }
+  .tl-social .tl-icon { background: rgba(201,169,110,0.12); color: var(--gold); }
+  .tl-social:hover {
+    border-color: rgba(201,169,110,0.7);
+    box-shadow: 0 4px 28px rgba(201,169,110,0.18);
+  }
+
+  /* phone button — filled gold */
+  .tl-phone {
+    background: linear-gradient(135deg, rgba(201,169,110,0.18), rgba(140,100,50,0.12));
+    border-color: rgba(201,169,110,0.60);
+    color: var(--gold);
+    box-shadow: 0 2px 22px rgba(201,169,110,0.15);
+  }
+  .tl-phone .tl-icon { background: var(--gold); color: var(--black); font-size: 20px; }
+  .tl-phone:hover { border-color: var(--gold); box-shadow: 0 6px 32px rgba(201,169,110,0.30); }
+
+  .ring-icon { display: inline-block; animation: ring 3.5s ease-in-out infinite; }
+  @keyframes ring {
+    0%,75%,100% { transform: rotate(0); }
+    80%  { transform: rotate(-18deg); }
+    87%  { transform: rotate(18deg); }
+    93%  { transform: rotate(-10deg); }
+  }
+
+  /* NAV LINKS */
+  .nav-links { display: flex; gap: 8px; width: 100%; margin-bottom: 8px; }
+  .nav-link {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 13px 6px; border-radius: 14px;
+    border: 1px solid rgba(201,169,110,0.22);
+    background: rgba(201,169,110,0.04);
+    text-decoration: none; color: var(--gold);
+    transition: all 0.2s;
+  }
+  .nav-link:hover { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.50); transform: translateY(-2px); }
+  .nav-link i { font-size: 19px; }
+  .nav-link span { font-size: 9.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* FOOTER */
+  .footer-brand {
+    margin-top: 14px; font-size: 10px; color: rgba(201,169,110,0.30);
+    letter-spacing: 1.5px; text-align: center;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-brand i { font-size: 11px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="taplink-page">
+  <div class="bg-particles" id="bgParticles"></div>
+
+  <div class="taplink-inner">
+
+    <!-- LOGO -->
+    <div class="logo-wrap">
+      <div class="logo-ring-outer">
+        <div class="logo-ring-inner">
+          {% if agency.logo %}
+            <img src="{{ agency.logo.url }}" alt="{{ agency.name }}" class="logo-img">
+          {% else %}
+            <div class="logo-placeholder">
+              <span class="lp-letters">AD</span>
+              <span class="lp-name">ASIA DECOR</span>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- NAME & TAGLINE -->
+    <div class="agency-tag">{{ agency.name }}</div>
+    <h1 class="agency-name">ОРГАНИЗАЦИЯ ПОЗДРАВЛЕНИЯ САМАРКАНД</h1>
+    <div class="agency-tagline">{{ agency.tagline }}</div>
+
+    <!-- ORNAMENT -->
+    <div class="ornament">
+      <div class="orn-line"></div>
+      <div class="orn-diamond"></div>
+      <div class="orn-line r"></div>
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="btn-stack">
+      {% if agency.telegram_link %}
+      <a href="{{ agency.telegram_link }}" target="_blank" rel="noopener" class="tl-btn tl-social">
+        <div class="tl-icon"><i class="fab fa-telegram-plane"></i></div>
+        <span class="tl-label">Telegram</span>
+      </a>
+      {% endif %}
+
+      {% if agency.instagram_link %}
+      <a href="{{ agency.instagram_link }}" target="_blank" rel="noopener" class="tl-btn tl-social">
+        <div class="tl-icon"><i class="fab fa-instagram"></i></div>
+        <span class="tl-label">Instagram</span>
+      </a>
+      {% endif %}
+
+      {% if agency.youtube_link %}
+      <a href="{{ agency.youtube_link }}" target="_blank" rel="noopener" class="tl-btn tl-social">
+        <div class="tl-icon"><i class="fab fa-youtube"></i></div>
+        <span class="tl-label">YouTube</span>
+      </a>
+      {% endif %}
+
+      {% if agency.tiktok_link %}
+      <a href="{{ agency.tiktok_link }}" target="_blank" rel="noopener" class="tl-btn tl-social">
+        <div class="tl-icon"><i class="fab fa-tiktok"></i></div>
+        <span class="tl-label">TikTok</span>
+      </a>
+      {% endif %}
+
+      {% if agency.phone1 %}
+      <a href="tel:{{ agency.phone1 }}" class="tl-btn tl-phone">
+        <div class="tl-icon"><i class="fas fa-phone ring-icon"></i></div>
+        <span class="tl-label">Buyurtma berish uchun</span>
+      </a>
+      {% endif %}
+
+      {% if agency.phone2 %}
+      <a href="tel:{{ agency.phone2 }}" class="tl-btn tl-phone" style="animation-delay:0.4s">
+        <div class="tl-icon"><i class="fas fa-phone"></i></div>
+        <span class="tl-label">{{ agency.phone2 }}</span>
+      </a>
+      {% endif %}
+    </div>
+
+    <!-- SECTION NAV -->
+    <div class="nav-links">
+      <a href="/tabriklar/" class="nav-link">
+        <i class="fas fa-gift"></i>
+        <span>Tabriklar</span>
+      </a>
+      <a href="/bezaklar/" class="nav-link">
+        <i class="fas fa-ring"></i>
+        <span>To'y bezak</span>
+      </a>
+      <a href="/kontaktlar/" class="nav-link">
+        <i class="fas fa-phone-alt"></i>
+        <span>Kontakt</span>
+      </a>
+    </div>
+
+    <div class="footer-brand">
+      <i class="fas fa-crown"></i>
+      <span>ASIA DECOR SAMARQAND</span>
+      <i class="fas fa-crown"></i>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const c = document.getElementById('bgParticles');
+  for (let i = 0; i < 28; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const s = Math.random() > 0.65 ? 3 : 2;
+    p.style.cssText = `width:${s}px;height:${s}px;left:${Math.random()*100}%;top:${50+Math.random()*55}%;animation-duration:${11+Math.random()*13}s;animation-delay:${Math.random()*14}s`;
+    c.appendChild(p);
+  }
+})();
+</script>
+{% endblock %}

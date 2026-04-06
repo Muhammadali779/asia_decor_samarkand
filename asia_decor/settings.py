@@ -9,14 +9,15 @@ SECRET_KEY = os.environ.get(
     'django-insecure-change-this-key'
 )
 
-# 🐞 DEBUG
-DEBUG = True
+# 🐞 DEBUG — Render'da False bo'lishi kerak (yoki env orqali)
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# 🌐 ALLOWED HOSTS
+# 🌐 ALLOWED HOSTS — barcha hostlarga ruxsat
 ALLOWED_HOSTS = [
-    'asia-decor-samarkand-3.onrender.com',  # Render domeningiz
-    '127.0.0.1',                            # lokal test uchun
-    'localhost'
+    'asia-decor-samarkand-3.onrender.com',
+    '127.0.0.1',
+    'localhost',
+    '*',  # ← Render health check uchun
 ]
 
 # 📦 APPS
@@ -33,7 +34,7 @@ INSTALLED_APPS = [
 # ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ STATIC uchun
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ SecurityMiddleware dan keyin
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,7 +65,7 @@ TEMPLATES = [
 # 🚀 WSGI
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
-# 🗄 DATABASE (Render uchun vaqtinchalik sqlite)
+# 🗄 DATABASE
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -86,16 +87,21 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC
+# 📁 STATIC — static/ papkasi mavjud bo'lishi kerak
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+# ⚠️ STATICFILES_DIRS faqat static/ papkasi mavjud bo'lsa ishlaydi
+# Agar papka yo'q bo'lsa, bu xatoga olib keladi
+import os as _os
+_static_dir = BASE_DIR / 'static'
+if _static_dir.exists():
+    STATICFILES_DIRS = [_static_dir]
+else:
+    STATICFILES_DIRS = []
 
-# ⚡ WhiteNoise config
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# ⚡ WhiteNoise — CompressedStaticFilesStorage (Manifest emas, chunki xato berishi mumkin)
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # 📁 MEDIA
 MEDIA_URL = '/media/'
@@ -104,6 +110,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # 🔢 DEFAULT FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# 🔒 HTTPS sozlamalari (Render HTTPS ishlatadi)
+# Bu sozlamalar CSRF 400 xatosini to'g'irlaydi
+CSRF_TRUSTED_ORIGINS = [
+    'https://asia-decor-samarkand-3.onrender.com',
+    'http://asia-decor-samarkand-3.onrender.com',
+]
+CSRF_COOKIE_SECURE = False  # HTTP uchun ham ishlashi uchun
+SESSION_COOKIE_SECURE = False
+
 # 🤖 TELEGRAM
 USER_BOT_TOKEN = os.environ.get('USER_BOT_TOKEN', '')
 ADMIN_BOT_TOKEN = os.environ.get('ADMIN_BOT_TOKEN', '')
@@ -111,7 +126,7 @@ ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '')
 
 SITE_URL = os.environ.get(
     'SITE_URL',
-    'https://asia_decor_samarkand-3.onrender.com'
+    'https://asia-decor-samarkand-3.onrender.com'
 )
 
 ALLOWED_ADMIN_IDS = os.environ.get('ALLOWED_ADMIN_IDS', '').split(',')

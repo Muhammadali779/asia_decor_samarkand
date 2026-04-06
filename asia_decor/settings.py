@@ -1,16 +1,12 @@
 import os
 from pathlib import Path
+import dj_database_url
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load .env if exists
-env_file = BASE_DIR / '.env'
-if env_file.exists():
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
-        if line and not line.startswith('#') and '=' in line:
-            k, v = line.split('=', 1)
-            os.environ.setdefault(k.strip(), v.strip())
+# 📁 .env faylini yuklash (Bu usul xavfsizroq va aniqroq)
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # 🔐 SECRET KEY
 SECRET_KEY = os.environ.get(
@@ -21,12 +17,9 @@ SECRET_KEY = os.environ.get(
 # 🐞 DEBUG
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-# 🌐 ALLOWED HOSTS — to'liq ro'yxat
-ALLOWED_HOSTS = [
-    '*',  # Render.com uchun (yoki aniq domen)
-]
+# 🌐 ALLOWED HOSTS
+ALLOWED_HOSTS = ['*']
 
-# Aniq domen variantlari (ixtiyoriy, agar * ishlamasa)
 _render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
 if _render_host:
     ALLOWED_HOSTS += [_render_host]
@@ -45,7 +38,7 @@ INSTALLED_APPS = [
 # ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static uchun
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -76,22 +69,21 @@ TEMPLATES = [
 # 🚀 WSGI
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
-# 🗄 DATABASE — PostgreSQL (Render yoki local)
-import dj_database_url
-
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
+# 🗄 DATABASE — PostgreSQL
+# Render'da DATABASE_URL avtomatik bo'ladi, lokalda .env dan o'qiydi
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
-    # Render.com — DATABASE_URL dan avtomatik oladi
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            ssl_require=os.environ.get('DB_SSL', 'True').lower() in ('true', '1', 'yes'),
+            conn_health_checks=True,
+            ssl_require=True, # Render bazalari uchun majburiy
         )
     }
 else:
-    # Local development — .env dan oladi
+    # Lokal xatolikni oldini olish uchun zaxira (fallback)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -117,18 +109,17 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC — static papka yo'q bo'lsa ham xato bermaydi
+# 📁 STATIC
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Faqat papka mavjud bo'lsa qo'shamiz
 _static_dir = BASE_DIR / 'static'
 if _static_dir.exists():
     STATICFILES_DIRS = [_static_dir]
 else:
     STATICFILES_DIRS = []
 
-# ⚡ WhiteNoise
+# ⚡ WhiteNoise (Static fayllar siqilishi uchun)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 📁 MEDIA

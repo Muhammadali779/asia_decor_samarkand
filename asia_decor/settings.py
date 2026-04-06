@@ -134,7 +134,7 @@ ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '')
 
 SITE_URL = os.environ.get(
     'SITE_URL',
-    'https://asia-decor-samarkand-3.onrender.com'
+    'https://asia-decor-samarkand-4.onrender.com'
 )
 
 ALLOWED_ADMIN_IDS = [

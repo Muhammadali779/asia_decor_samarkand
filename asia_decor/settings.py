@@ -15,10 +15,8 @@ SECRET_KEY = os.environ.get(
 )
 
 # 🐞 DEBUG
-DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
-
-# 🌐 ALLOWED HOSTS
-ALLOWED_HOSTS = ['*','']
+DEBUG = True
+ALLOWED_HOSTS = ['asia-decor-samarkand-4.onrender.com']
 
 _render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
 if _render_host:

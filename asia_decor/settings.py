@@ -3,12 +3,22 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'asia-decor-samarkand-secret-key-2024-change-in-production')
+# 🔐 SECRET KEY
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-change-this-key'
+)
 
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+# 🐞 DEBUG
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+# 🌐 ALLOWED HOSTS
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1'
+).split(',')
 
+# 📦 APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -19,8 +29,10 @@ INSTALLED_APPS = [
     'core',
 ]
 
+# ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ STATIC uchun
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -31,6 +43,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'asia_decor.urls'
 
+# 🧩 TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -47,8 +60,10 @@ TEMPLATES = [
     },
 ]
 
+# 🚀 WSGI
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
+# 🗄 DATABASE (Render uchun vaqtinchalik sqlite)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -56,6 +71,7 @@ DATABASES = {
     }
 }
 
+# 🔐 PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -63,25 +79,38 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# 🌍 LANGUAGE
 LANGUAGE_CODE = 'uz'
 TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
+# 📁 STATIC
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
+# ⚡ WhiteNoise config
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# 📁 MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# 🔢 DEFAULT FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Telegram Bot Settings
-USER_BOT_TOKEN = os.environ.get('USER_BOT_TOKEN', 'YOUR_USER_BOT_TOKEN_HERE')
-ADMIN_BOT_TOKEN = os.environ.get('ADMIN_BOT_TOKEN', 'YOUR_ADMIN_BOT_TOKEN_HERE')
-ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', 'YOUR_ADMIN_CHAT_ID_HERE')
-SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
+# 🤖 TELEGRAM
+USER_BOT_TOKEN = os.environ.get('USER_BOT_TOKEN', '')
+ADMIN_BOT_TOKEN = os.environ.get('ADMIN_BOT_TOKEN', '')
+ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '')
 
-# Allowed admin Telegram IDs (comma separated)
-ALLOWED_ADMIN_IDS = os.environ.get('ALLOWED_ADMIN_IDS', '')
+SITE_URL = os.environ.get(
+    'SITE_URL',
+    'https://asia_decor_samarkand-3.onrender.com'
+)
+
+ALLOWED_ADMIN_IDS = os.environ.get('ALLOWED_ADMIN_IDS', '').split(',')

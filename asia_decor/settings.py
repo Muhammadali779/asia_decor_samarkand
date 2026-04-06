@@ -3,22 +3,33 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load .env if exists
+env_file = BASE_DIR / '.env'
+if env_file.exists():
+    for line in env_file.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            k, v = line.split('=', 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
 # 🔐 SECRET KEY
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
-    'django-insecure-change-this-key'
+    'django-insecure-please-change-this-in-production'
 )
 
-# 🐞 DEBUG — Render'da False bo'lishi kerak (yoki env orqali)
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# 🐞 DEBUG
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-# 🌐 ALLOWED HOSTS — barcha hostlarga ruxsat
+# 🌐 ALLOWED HOSTS — to'liq ro'yxat
 ALLOWED_HOSTS = [
-    'asia-decor-samarkand-3.onrender.com',
-    '127.0.0.1',
-    'localhost',
-    '*',  # ← Render health check uchun
+    '*',  # Render.com uchun (yoki aniq domen)
 ]
+
+# Aniq domen variantlari (ixtiyoriy, agar * ishlamasa)
+_render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
+if _render_host:
+    ALLOWED_HOSTS += [_render_host]
 
 # 📦 APPS
 INSTALLED_APPS = [
@@ -34,7 +45,7 @@ INSTALLED_APPS = [
 # ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ SecurityMiddleware dan keyin
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static uchun
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -87,21 +98,19 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC — static/ papkasi mavjud bo'lishi kerak
+# 📁 STATIC — static papka yo'q bo'lsa ham xato bermaydi
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# ⚠️ STATICFILES_DIRS faqat static/ papkasi mavjud bo'lsa ishlaydi
-# Agar papka yo'q bo'lsa, bu xatoga olib keladi
-import os as _os
+# Faqat papka mavjud bo'lsa qo'shamiz
 _static_dir = BASE_DIR / 'static'
 if _static_dir.exists():
     STATICFILES_DIRS = [_static_dir]
 else:
     STATICFILES_DIRS = []
 
-# ⚡ WhiteNoise — CompressedStaticFilesStorage (Manifest emas, chunki xato berishi mumkin)
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# ⚡ WhiteNoise
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # 📁 MEDIA
 MEDIA_URL = '/media/'
@@ -110,16 +119,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # 🔢 DEFAULT FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 🔒 HTTPS sozlamalari (Render HTTPS ishlatadi)
-# Bu sozlamalar CSRF 400 xatosini to'g'irlaydi
-CSRF_TRUSTED_ORIGINS = [
-    'https://asia-decor-samarkand-3.onrender.com',
-    'http://asia-decor-samarkand-3.onrender.com',
-]
-CSRF_COOKIE_SECURE = False  # HTTP uchun ham ishlashi uchun
-SESSION_COOKIE_SECURE = False
-
-# 🤖 TELEGRAM
+# 🤖 TELEGRAM BOT SOZLAMALARI
 USER_BOT_TOKEN = os.environ.get('USER_BOT_TOKEN', '')
 ADMIN_BOT_TOKEN = os.environ.get('ADMIN_BOT_TOKEN', '')
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '')
@@ -129,4 +129,7 @@ SITE_URL = os.environ.get(
     'https://asia-decor-samarkand-3.onrender.com'
 )
 
-ALLOWED_ADMIN_IDS = os.environ.get('ALLOWED_ADMIN_IDS', '').split(',')
+ALLOWED_ADMIN_IDS = [
+    x.strip() for x in os.environ.get('ALLOWED_ADMIN_IDS', '').split(',')
+    if x.strip()
+]

@@ -18,7 +18,7 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 # 🌐 ALLOWED HOSTS
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','']
 
 _render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
 if _render_host:

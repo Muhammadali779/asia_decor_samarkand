@@ -304,16 +304,3 @@ __pycache__/
 *.log
 *.pot
 local_settings.py
-db.sqlite3
-db.sqlite3-journal
-media
-celerybeat-schedule
-celerybeat.pid
-*.mo
-instance/
-.webassets-cache
-.scrapy
-docs/_build/
-.pybuilder/
-
-    

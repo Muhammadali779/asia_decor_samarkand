@@ -76,15 +76,32 @@ TEMPLATES = [
 # 🚀 WSGI
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
-# 🗄 DATABASE
-BASE_DIR = Path(__file__).resolve().parent.parent
+# 🗄 DATABASE — PostgreSQL (Render yoki local)
+import dj_database_url
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+
+if DATABASE_URL:
+    # Render.com — DATABASE_URL dan avtomatik oladi
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=os.environ.get('DB_SSL', 'True').lower() in ('true', '1', 'yes'),
+        )
     }
-}
+else:
+    # Local development — .env dan oladi
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'asia_decor_db'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
 
 # 🔐 PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [

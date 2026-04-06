@@ -77,6 +77,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
 # 🗄 DATABASE
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

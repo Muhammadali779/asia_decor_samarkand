@@ -10,13 +10,14 @@ SECRET_KEY = os.environ.get(
 )
 
 # 🐞 DEBUG
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 # 🌐 ALLOWED HOSTS
-ALLOWED_HOSTS = os.environ.get(
-    'ALLOWED_HOSTS',
-    'localhost,127.0.0.1'
-).split(',')
+ALLOWED_HOSTS = [
+    'asia-decor-samarkand-3.onrender.com',  # Render domeningiz
+    '127.0.0.1',                            # lokal test uchun
+    'localhost'
+]
 
 # 📦 APPS
 INSTALLED_APPS = [

@@ -7,11 +7,15 @@
   .page { padding-top: 0 !important; }
   .bottom-nav { display: none !important; }
 
-  html, body { height: 100%; }
+  html, body {
+    height: 100%;
+    background: #0A0A0A !important;
+    background-color: #0A0A0A !important;
+  }
 
   .taplink-page {
     min-height: 100vh;
-    background: var(--black);
+    background: #0A0A0A;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -38,7 +42,7 @@
   .particle {
     position: absolute;
     border-radius: 50%;
-    background: var(--gold);
+    background: #C9A96E;
     opacity: 0;
     animation: rise linear infinite;
   }
@@ -84,30 +88,30 @@
     width: 98px; height: 98px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2.5px solid var(--gold-dark);
+    border: 2.5px solid #A07840;
   }
   .logo-placeholder {
     width: 98px; height: 98px;
     border-radius: 50%;
-    background: #111;
-    border: 2.5px solid var(--gold-dark);
+    background: #111111;
+    border: 2.5px solid #A07840;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 3px;
   }
   .logo-placeholder .lp-letters {
     font-family: 'Playfair Display', serif;
     font-size: 30px; font-weight: 700;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    background: linear-gradient(135deg, #A07840, #E8C98A);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     line-height: 1;
   }
   .logo-placeholder .lp-name {
-    font-size: 7px; letter-spacing: 2px; color: var(--gold-dark); font-weight: 700;
+    font-size: 7px; letter-spacing: 2px; color: #A07840; font-weight: 700;
   }
 
   /* TEXT */
   .agency-tag {
-    font-size: 10px; letter-spacing: 3.5px; color: var(--gold-dark);
+    font-size: 10px; letter-spacing: 3.5px; color: #A07840;
     font-weight: 700; text-transform: uppercase; margin-bottom: 10px;
     text-align: center;
   }
@@ -115,11 +119,11 @@
     font-family: 'Playfair Display', serif;
     font-size: clamp(20px, 5.5vw, 28px);
     font-weight: 700; text-align: center; line-height: 1.25;
-    color: var(--white); margin-bottom: 8px;
+    color: #FFFFFF; margin-bottom: 8px;
   }
   .agency-tagline {
     font-size: 12px; font-weight: 700; letter-spacing: 2px;
-    color: var(--gold); text-transform: uppercase;
+    color: #C9A96E; text-transform: uppercase;
     text-align: center; margin-bottom: 30px;
   }
 
@@ -127,7 +131,7 @@
   .ornament { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 24px; }
   .orn-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(201,169,110,0.5)); }
   .orn-line.r { background: linear-gradient(to left, transparent, rgba(201,169,110,0.5)); }
-  .orn-diamond { width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+  .orn-diamond { width: 7px; height: 7px; background: #C9A96E; transform: rotate(45deg); flex-shrink: 0; }
 
   /* BUTTON STACK */
   .btn-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 24px; }
@@ -155,28 +159,26 @@
     text-align: center; padding-right: 60px;
   }
 
-  /* all social buttons: same black/gold palette */
   .tl-social {
     background: rgba(201,169,110,0.07);
     border-color: rgba(201,169,110,0.32);
-    color: var(--gold-light);
+    color: #E8C98A;
     box-shadow: 0 2px 16px rgba(0,0,0,0.4);
   }
-  .tl-social .tl-icon { background: rgba(201,169,110,0.12); color: var(--gold); }
+  .tl-social .tl-icon { background: rgba(201,169,110,0.12); color: #C9A96E; }
   .tl-social:hover {
     border-color: rgba(201,169,110,0.7);
     box-shadow: 0 4px 28px rgba(201,169,110,0.18);
   }
 
-  /* phone button — filled gold */
   .tl-phone {
     background: linear-gradient(135deg, rgba(201,169,110,0.18), rgba(140,100,50,0.12));
     border-color: rgba(201,169,110,0.60);
-    color: var(--gold);
+    color: #C9A96E;
     box-shadow: 0 2px 22px rgba(201,169,110,0.15);
   }
-  .tl-phone .tl-icon { background: var(--gold); color: var(--black); font-size: 20px; }
-  .tl-phone:hover { border-color: var(--gold); box-shadow: 0 6px 32px rgba(201,169,110,0.30); }
+  .tl-phone .tl-icon { background: #C9A96E; color: #0A0A0A; font-size: 20px; }
+  .tl-phone:hover { border-color: #C9A96E; box-shadow: 0 6px 32px rgba(201,169,110,0.30); }
 
   .ring-icon { display: inline-block; animation: ring 3.5s ease-in-out infinite; }
   @keyframes ring {
@@ -193,7 +195,7 @@
     padding: 13px 6px; border-radius: 14px;
     border: 1px solid rgba(201,169,110,0.22);
     background: rgba(201,169,110,0.04);
-    text-decoration: none; color: var(--gold);
+    text-decoration: none; color: #C9A96E;
     transition: all 0.2s;
   }
   .nav-link:hover { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.50); transform: translateY(-2px); }
@@ -282,7 +284,7 @@
       {% endif %}
 
       {% if agency.phone2 %}
-      <a href="tel:{{ agency.phone2 }}" class="tl-btn tl-phone" style="animation-delay:0.4s">
+      <a href="tel:{{ agency.phone2 }}" class="tl-btn tl-phone">
         <div class="tl-icon"><i class="fas fa-phone"></i></div>
         <span class="tl-label">{{ agency.phone2 }}</span>
       </a>

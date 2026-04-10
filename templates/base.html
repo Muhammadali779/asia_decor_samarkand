@@ -11,8 +11,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     {% block extra_css %}{% endblock %}
+    <style>html,body{background:#0A0A0A;color:#ffffff;}</style>
 </head>
-<body>
+<body style="background:#0A0A0A;color:#ffffff;">
     <nav class="nav">
         <a href="/" class="nav-logo">{{ agency.name|truncatechars:20 }}</a>
         <div class="nav-menu">

@@ -5,35 +5,32 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 📁 .env faylini yuklash (Bu usul xavfsizroq va aniqroq)
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-# 🔐 SECRET KEY
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'django-insecure-please-change-this-in-production'
 )
 
-# 🐞 DEBUG
-DEBUG = True
-ALLOWED_HOSTS = ['asia-decor-samarkand-4.onrender.com']
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+
+ALLOWED_HOSTS = ['asia-decor-samarkand-4.onrender.com', 'localhost', '127.0.0.1']
 
 _render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME', '')
-if _render_host:
-    ALLOWED_HOSTS += [_render_host]
+if _render_host and _render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_host)
 
-# 📦 APPS
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'core',
 ]
 
-# ⚙️ MIDDLEWARE
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -47,7 +44,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'asia_decor.urls'
 
-# 🧩 TEMPLATES
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,24 +60,27 @@ TEMPLATES = [
     },
 ]
 
-# 🚀 WSGI
 WSGI_APPLICATION = 'asia_decor.wsgi.application'
 
 # 🗄 DATABASE — PostgreSQL
-# Render'da DATABASE_URL avtomatik bo'ladi, lokalda .env dan o'qiydi
-DATABASE_URL = os.environ.get('DATABASE_URL')
+# Asosiy muammo: ssl_require=True bilan dj_database_url ishlatilganda
+# Render ichki URL uchun SSL shart emas, tashqi uchun kerak
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
 
 if DATABASE_URL:
+    # postgres:// → postgresql:// formatiga o'tkazish (dj_database_url talab qiladi)
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
             conn_health_checks=True,
-            ssl_require=True, # Render bazalari uchun majburiy
+            ssl_require=False,  # ← BU ASOSIY TUZATISH: Render internal DB SSL talab qilmaydi
         )
     }
 else:
-    # Lokal xatolikni oldini olish uchun zaxira (fallback)
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -93,7 +92,6 @@ else:
         }
     }
 
-# 🔐 PASSWORD VALIDATORS
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -101,33 +99,30 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# 🌍 LANGUAGE
 LANGUAGE_CODE = 'uz'
 TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC
+# 📁 STATIC — WhiteNoise bilan to'g'ri konfiguratsiya
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# faqat mavjud bo'lsa qo'shamiz
 _static_dir = BASE_DIR / 'static'
 if _static_dir.exists():
     STATICFILES_DIRS = [_static_dir]
 else:
     STATICFILES_DIRS = []
 
-# ⚡ WhiteNoise (Static fayllar siqilishi uchun)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# 📁 MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# 🔢 DEFAULT FIELD
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# 🤖 TELEGRAM BOT SOZLAMALARI
+# 🤖 TELEGRAM BOT
 USER_BOT_TOKEN = os.environ.get('USER_BOT_TOKEN', '')
 ADMIN_BOT_TOKEN = os.environ.get('ADMIN_BOT_TOKEN', '')
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '')
@@ -141,3 +136,25 @@ ALLOWED_ADMIN_IDS = [
     x.strip() for x in os.environ.get('ALLOWED_ADMIN_IDS', '').split(',')
     if x.strip()
 ]
+
+# Logging — server xatolarini ko'rish uchun
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}

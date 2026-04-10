@@ -113,16 +113,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-
-# WhiteNoise — manifest talab qilmaydigan rejim
-WHITENOISE_MANIFEST_STRICT = False
 
 
 MEDIA_URL = '/media/'

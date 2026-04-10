@@ -1,7 +1,7 @@
 #!/bin/bash
 # ============================================================
 # Render.com Build Script
-# Render dashboard > Build Command: ./build.sh
+# Render dashboard > Build Command: bash build.sh
 # ============================================================
 set -e
 
@@ -13,6 +13,9 @@ rm -rf staticfiles/
 
 echo "📁 Static fayllar yig'ilmoqda..."
 python manage.py collectstatic --noinput --clear
+
+echo "📋 Yig'ilgan fayllar tekshirilmoqda..."
+ls -la staticfiles/css/ 2>/dev/null && echo "✅ css/main.css topildi" || echo "⚠️ css papkasi topilmadi"
 
 echo "🗄 Database migratsiyalar..."
 python manage.py migrate --noinput

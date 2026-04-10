@@ -104,18 +104,17 @@ TIME_ZONE = 'Asia/Tashkent'
 USE_I18N = True
 USE_TZ = True
 
-# 📁 STATIC — WhiteNoise bilan to'g'ri konfiguratsiya
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# faqat mavjud bo'lsa qo'shamiz
-_static_dir = BASE_DIR / 'static'
-if _static_dir.exists():
-    STATICFILES_DIRS = [_static_dir]
-else:
-    STATICFILES_DIRS = []
+STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -137,7 +136,7 @@ ALLOWED_ADMIN_IDS = [
     if x.strip()
 ]
 
-# Logging — server xatolarini ko'rish uchun
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

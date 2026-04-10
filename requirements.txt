@@ -10,6 +10,8 @@ h11==0.14.0
 idna==3.7
 packaging==24.1
 pillow==10.4.0
+psycopg==3.2.4
+psycopg-binary==3.2.4
 psycopg2-binary==2.9.9
 pyTelegramBotAPI==4.16.1
 python-dotenv==1.0.1
